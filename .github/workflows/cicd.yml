@@ -1,32 +1,73 @@
-name: implement a CICD workflow for a Java WebApp using GitHub Actions and Maven
+name: Build war file And Deploy to Azure Cloud
+
+env:
+  AZURE_WEB_APP: 'javawebapp'
+  JAVA_VERSION: '11'
+  DISTRIBUTION: zulu
+
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches: 
+     - main
+  workflow_dispatch: 
+
+permissions: 
+  contents: read
+  packages: write
+  
+
 jobs:
- build:
-  runs-on: ubuntu-latest
-  env:
-    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  steps:
-  - name: checkout code
-    uses: actions/checkout@v3
-  - name: Set up JDK
-    uses: actions/setup-java@v3
-    with:
-      distribution: 'adopt'
-      java-version: '11'
-  - name: Build with Maven
-    run: mvn clean install -f MyWebApp/pom.xml
-  - name: Run SonarQube Scan
-    uses: sonarsource/sonarqube-scan-action@master
-    with:
-      projectBaseDir: .
-      args: >
-        -Dsonar.organization=akannan1087
-        -Dsonar.projectKey=akannan1087_my-javawebapp-repo
-        -Dsonar.java.binaries=**/target/classes
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  Build-War-File:
+    runs-on: ubuntu-latest
+    environment:  production
+    
+    defaults:
+      run:
+        shell:
+
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+           java_version: ${{env.JAVA_VERSION}}
+           distribution: ${{env.DISTRIBUTION}}
+           cache: 'maven'
+      - name: Setup Maven
+        uses: comchangs/action-maven@v0.4-beta
+      - name: Build a Source Code
+        run: mvn clean install
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyWebApp
+          path: ${{ github.workspace}}/target/*.war
+
+  deploy:
+     permissions:
+      contents: read
+     runs-on: ubuntu-latest
+     needs: Build-War-File
+     environment: 
+      name: production
+      url:  ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+     steps:
+       - name: Download Artifacts
+         uses: actions/download-artifact@v4
+         with:
+            name: MyWebApp
+       - name: Deploy to Azure Web App
+         id: deploy-to-webapp
+         uses: azure/webapps-deploy@v3.0.6
+         with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: '*.war'
+     
+          
+    
