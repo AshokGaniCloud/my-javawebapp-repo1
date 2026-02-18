@@ -34,7 +34,7 @@ jobs:
            cache: 'maven'
      
       - name: Build a Source Code
-        run: mvn clean install
+        run: mvn clean install -f MyWebApp/pom.xml
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
