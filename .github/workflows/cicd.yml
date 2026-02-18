@@ -35,6 +35,13 @@ jobs:
      
       - name: Build a Source Code
         run: mvn clean install -f MyWebApp/pom.xml
+      - name: Build a Test
+        run: mvn clean test -f MyWebApp/pom.xml
+      - name: Jacoco Code coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
