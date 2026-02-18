@@ -46,7 +46,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: MyWebApp
+          name: WebApp
           path: ${{ github.workspace}}/MyWebApp/target/*.war
 
   deploy:
@@ -62,7 +62,7 @@ jobs:
        - name: Download Artifacts
          uses: actions/download-artifact@v4
          with:
-            name: MyWebApp
+            name: WebApp
        - name: Deploy to Azure Web App
          id: deploy-to-webapp
          uses: azure/webapps-deploy@v3.0.6
