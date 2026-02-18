@@ -1,7 +1,7 @@
 name: Build war file And Deploy to Azure Cloud
 
 env:
-  AZURE_WEB_APP: 'javawebapp'
+  AZURE_WEB_APP: javawebapp
   JAVA_VERSION: '11'
   DISTRIBUTION: zulu
 
@@ -21,9 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:  production
     
-    defaults:
-      run:
-        shell:
+  
 
     steps:
       - name: Checkout self
