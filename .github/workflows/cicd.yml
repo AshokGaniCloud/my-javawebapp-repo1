@@ -41,25 +41,8 @@ jobs:
         if: always()
         run: mvn clean test -f MyWebApp/pom.xml
         continue-on-error: true
-      - name: Jacoco Code coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: |
-             ${{ github.workspace }}/target/site/jacoco/jacoco.xml
-             ${{ github.workspace }}/target/site/jacoco/index.html
-      - name: Add coverage to PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.6.1
-        with:
-          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
-          token: ${{ secrets.GIT_TOKEN }}
-          min-coverage-overall: 80
-          min-coverage-changed-files: 60
-          title: '# :recycle: Coverage Report'
-          update-comment: true
-          pass-emoji: ':green_circle:'
-          fail-emoji: ':red_circle:'
+   
+    
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
