@@ -32,8 +32,7 @@ jobs:
            java-version: ${{env.JAVA_VERSION}}
            distribution: ${{env.DISTRIBUTION}}
            cache: 'maven'
-      - name: Setup Maven
-        uses: comchangs/action-maven@v0.4-beta
+     
       - name: Build a Source Code
         run: mvn clean install
       - name: Upload artifact for deployment job
