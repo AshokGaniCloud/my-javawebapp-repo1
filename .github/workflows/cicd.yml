@@ -1,7 +1,7 @@
 name: Build war file And Deploy to Azure Cloud
 
 env:
-  AZURE_WEB_APP: javawebapp
+  AZURE_WEBAPP_NAME: javawebapp
   JAVA_VERSION: '11'
   DISTRIBUTION: zulu
 
@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MyWebApp
-          path: ${{ github.workspace}}/target/*.war
+          path: ${{ github.workspace}}/MyWebApp/target/*.war
 
   deploy:
      permissions:
